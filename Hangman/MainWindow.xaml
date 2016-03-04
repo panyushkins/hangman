@@ -1,0 +1,10 @@
+﻿<Window x:Class="Hangman.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Виселица" Height="500" Width="500">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Images/mw_background.jpg"/>
+        </Grid.Background>
+    </Grid>
+</Window>
