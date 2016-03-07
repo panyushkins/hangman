@@ -24,5 +24,11 @@ namespace Hangman
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            VKAuth dialog = new VKAuth();
+            dialog.Show();
+        }
     }
 }

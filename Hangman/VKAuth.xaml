@@ -1,0 +1,10 @@
+﻿<Window x:Class="Hangman.VKAuth"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Авторизация в Vkontakte" Height="600" Width="600"
+        ResizeMode="NoResize" >
+    <Grid>
+        <WebBrowser Name="VK_Auth" 
+                    Navigated="VK_Auth_Navigated"/>
+    </Grid>
+</Window>
