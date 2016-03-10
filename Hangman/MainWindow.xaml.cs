@@ -22,7 +22,6 @@ namespace Hangman
     {
         public MainWindow()
         {
-            // test
             InitializeComponent();
         }
 
