@@ -64,12 +64,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DB\Category.cs" />
+    <Compile Include="DB\HangmanContext.cs" />
     <Compile Include="VKAuth.xaml.cs">
       <DependentUpon>VKAuth.xaml</DependentUpon>
     </Compile>
     <Compile Include="Share.xaml.cs">
       <DependentUpon>Share.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DB\Word.cs" />
     <Page Include="VKAuth.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
