@@ -20,20 +20,24 @@ namespace Hangman
     public partial class VKAuth : Window
     {
         public string AccessToken { get; set; }
+        public string User_id { get; set; }
         public VKAuth()
         {
             InitializeComponent();
-          //  string appid = "5340623";
-            VK_Auth.Navigate(new Uri("https://oauth.vk.com/authorize?client_id=5340623&display=popup&redirect_uri=http://oauth.vk.com/blank.html&scope=wall&response_type=token&v=5.45", UriKind.Absolute));
-
+            VK_Auth.Navigate(new Uri("https://oauth.vk.com/authorize?client_id=5340623&display=popup&redirect_uri=https://oauth.vk.com/blank.html&scope=wall&response_type=token&v=5.45", UriKind.Absolute));
         }
 
         private void VK_Auth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
-            if (e.Uri.ToString().StartsWith("https://oauth.vk.com/blank.html#access_token="))
-            {
-                MessageBox.Show(e.Uri.ToString());
-            }
+            AccessToken = e.Uri.ToString().Substring("https://oauth.vk.com/blank.html#access_token=".Length);
+            User_id = AccessToken.Substring(2, AccessToken.IndexOf('&'));
+            AccessToken = AccessToken.Substring(0, AccessToken.IndexOf('&'));
+
+            string url_post = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&тестовая+публикация&v=5.50&access_token=" + AccessToken;
+
+            VK_Auth.Navigate(new Uri(url_post, UriKind.Absolute));
+
+            MessageBox.Show(AccessToken);
         }
     }
 }
