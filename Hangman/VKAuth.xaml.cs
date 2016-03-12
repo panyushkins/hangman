@@ -29,7 +29,7 @@ namespace Hangman
 
         private void VK_Auth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
-            AccessToken = e.Uri.ToString().Substring("https://oauth.vk.com/blank.html#access_token=".Length);
+            AccessToken = e.Uri.ToString().Substring("https://oauth.vk.com/blank.html#access_token=".Length); 
             User_id = AccessToken.Substring(2, AccessToken.IndexOf('&'));
             AccessToken = AccessToken.Substring(0, AccessToken.IndexOf('&'));
 
