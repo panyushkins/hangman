@@ -43,10 +43,10 @@ namespace Hangman
                 Experies_in = Convert.ToDouble(response[1].Substring("expires_in=".Length));
                 DateTime Experies_at = now.AddSeconds(Experies_in);
 
-            }
-
                 string url_post = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=test+from+my+edu+project&v=5.50&access_token=" + AccessToken;
-               VK_Auth.Navigate(new Uri(url_post, UriKind.Absolute));
+                VK_Auth.Navigate(new Uri(url_post, UriKind.Absolute));
+
+            }
 
         }
 
