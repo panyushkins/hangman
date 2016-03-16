@@ -84,6 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AlphabeticalKeyboard.xaml.cs">
+      <DependentUpon>AlphabeticalKeyboard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DB\Category.cs" />
     <Compile Include="DB\HangmanContext.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -95,6 +98,10 @@
       <DependentUpon>Share.xaml</DependentUpon>
     </Compile>
     <Compile Include="DB\Word.cs" />
+    <Page Include="AlphabeticalKeyboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="VKAuth.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
