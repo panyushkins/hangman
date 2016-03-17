@@ -48,31 +48,9 @@ namespace Hangman
                 Experies_in = Convert.ToDouble(response[1].Substring("expires_in=".Length));
 
 
-
-                // string message = "Я+отгадал+слово+" + word + "+в+Виселице+за" time + "минут!";
-
-                //     var request = (HttpWebRequest)WebRequest.Create("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken);
-                //     request.ContentType = "application/x-www-form-urlencoded";
-                //
-                //     var responseStream = request.GetResponse().GetResponseStream();
-                //     string result = new StreamReader(responseStream, Encoding.Unicode).ReadToEnd();
-
-                Dictionary<string, object> request = new Dictionary<string, object>();
-
-                request["request"] = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken;
-
-                HttpClient client = new HttpClient();
-
-                var response2 = client.GetAsync("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken).Result;
-
-                string ser_list = response2.Content.ReadAsStringAsync().Result;
-
-                Response4 k = JsonConvert.DeserializeObject<Response4>(ser_list);
-
-                var t = 1;
+                MakingPost();
 
                 this.Close();
-                MessageBox.Show("Запись появилась на стене.");
             }
             if (e.Uri.ToString().Contains("access_denied"))
             {
@@ -92,6 +70,25 @@ namespace Hangman
             builder.Append("response_type=token");
 
             return builder.ToString();
+        }
+
+        internal void MakingPost()
+        {
+            Dictionary<string, object> request = new Dictionary<string, object>();
+
+            request["request"] = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken;
+
+            HttpClient client = new HttpClient();
+
+            var response2 = client.GetAsync("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken).Result;
+
+            string ser_list = response2.Content.ReadAsStringAsync().Result;
+
+            Response4 k = JsonConvert.DeserializeObject<Response4>(ser_list);
+
+            var t = 1;
+
+            MessageBox.Show("Запись появилась на стене.");
         }
     }
 }
