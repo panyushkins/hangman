@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,6 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Hangman.DTO.Response;
 
 namespace Hangman
 {
@@ -41,12 +46,39 @@ namespace Hangman
                 AccessToken = response[0];
                 User_id = response[2].Substring("user_id=".Length);
                 Experies_in = Convert.ToDouble(response[1].Substring("expires_in=".Length));
-                DateTime Experies_at = now.AddSeconds(Experies_in);
 
-                string url_post = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=test+from+my+edu+project&v=5.50&access_token=" + AccessToken;
-                VK_Auth.Navigate(new Uri(url_post, UriKind.Absolute));
+
+
+                // string message = "Я+отгадал+слово+" + word + "+в+Виселице+за" time + "минут!";
+
+                //     var request = (HttpWebRequest)WebRequest.Create("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken);
+                //     request.ContentType = "application/x-www-form-urlencoded";
+                //
+                //     var responseStream = request.GetResponse().GetResponseStream();
+                //     string result = new StreamReader(responseStream, Encoding.Unicode).ReadToEnd();
+
+                Dictionary<string, object> request = new Dictionary<string, object>();
+
+                request["request"] = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken;
+
+                HttpClient client = new HttpClient();
+
+                var response2 = client.GetAsync("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken).Result;
+
+                string ser_list = response2.Content.ReadAsStringAsync().Result;
+
+                Response4 k = JsonConvert.DeserializeObject<Response4>(ser_list);
+
+                var t = 1;
+
+                this.Close();
+                MessageBox.Show("Запись появилась на стене.");
             }
-
+            if (e.Uri.ToString().Contains("access_denied"))
+            {
+                MessageBox.Show("Ошибка авторизации! Разрешите доступ приложению.");
+                this.Close();
+            }
         }
 
         internal static string CreateAuthorizeUrlFor(ulong appId, string scope)
