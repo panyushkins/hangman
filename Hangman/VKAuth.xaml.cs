@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Newtonsoft.Json;
 using System.Net.Http;
 using Hangman.DTO.Response;
+using Newtonsoft.Json.Linq;
 
 namespace Hangman
 {
@@ -76,19 +77,28 @@ namespace Hangman
         {
             Dictionary<string, object> request = new Dictionary<string, object>();
 
-            request["request"] = "https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken;
-
             HttpClient client = new HttpClient();
 
-            var response2 = client.GetAsync("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=а+теперь+еще+и+по-русски&v=5.50&access_token=" + AccessToken).Result;
+            var response2 = client.GetAsync("https://api.vk.com/method/wall.post?user_id=-" + User_id + "&message=Я+играю+в+крутую+«Виселицу».+Попробуй+и+ты!&v=5.50&access_token=" + AccessToken).Result;
 
             string ser_list = response2.Content.ReadAsStringAsync().Result;
 
-            Response4 k = JsonConvert.DeserializeObject<Response4>(ser_list);
+            string success = null;
 
-            var t = 1;
+            if (ser_list.Contains("response"))
+            {
+                 success = JObject.Parse(ser_list).SelectToken("response").ToString();
+            }
+            else
+            {
+                 success = JObject.Parse(ser_list).SelectToken("error").ToString();
+            }
+            Response resp = JsonConvert.DeserializeObject<Response>(success);
 
-            MessageBox.Show("Запись появилась на стене.");
+            if (resp.Post_id != 0)
+                MessageBox.Show("Запись появилась на стене.");
+            if (resp.ErrorCode != 0)
+                MessageBox.Show("Ошибка при публикации записи. Код ошибки: " + resp.ErrorCode + ". Сообщение:" + resp.ErrorMessage);
         }
     }
 }
