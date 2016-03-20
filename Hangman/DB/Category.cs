@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hangman.DB
 {
-    class Category
+    public class Category
     {
         public Category()
         {

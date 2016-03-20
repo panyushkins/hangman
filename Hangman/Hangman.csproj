@@ -113,6 +113,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\CountVisibilityConverter.cs" />
+    <Compile Include="Converters\HangmanVisibilityConverter.cs" />
     <Compile Include="Converters\LabelContentStateConverter.cs" />
     <Compile Include="Converters\LabelStateConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
