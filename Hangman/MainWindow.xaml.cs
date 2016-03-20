@@ -28,11 +28,5 @@ namespace Hangman
             //LstWords.ItemsSource = HangmanDb.Words.Local;
             //LstWords.DisplayMemberPath = "Text";
         }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            VKAuth share = new VKAuth();
-            share.Show();
-        }
     }
 }

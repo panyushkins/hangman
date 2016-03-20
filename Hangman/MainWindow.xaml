@@ -4,10 +4,18 @@
         xmlns:hangman="clr-namespace:Hangman"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        Title="Виселица" Height="500" Width="700"
+        xmlns:converters="clr-namespace:Hangman.Converters"
+        xmlns:viewModel="clr-namespace:Hangman.ViewModel"
+        Title="Виселица" Height="400" Width="600"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        SizeToContent="Height"
-        FontSize="16">
+        FontSize="16"
+        SizeToContent="Height">
+    <Window.Resources>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <converters:CountVisibilityConverter x:Key="CountVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:HangmanVisibilityConverter x:Key="HangmanVisibilityConverter" />
+    </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded" >
             <command:EventToCommand Command="{Binding LoadCommand}" />
@@ -18,15 +26,13 @@
             <ImageBrush ImageSource="Images/mw_background.jpg"/>
         </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition ></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="Игра">
@@ -34,7 +40,7 @@
                 <MenuItem Header="Выход" Command="{Binding ExitCommand}"/>
             </MenuItem>
         </Menu>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="5"
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="5" Grid.ColumnSpan="2"
                     VerticalAlignment="Center">
             <TextBlock Text="Категория" VerticalAlignment="Center" />
             <ComboBox x:Name="CbCategories" Margin="5,0,0,0" ItemsSource="{Binding WordCategories}"
@@ -43,7 +49,25 @@
                       VerticalAlignment="Center"
                       Width="150" />
             <Button Content="Играть" Command="{Binding NewGameCommand}" Margin="5,0,0,0" VerticalAlignment="Center"/>
-            <StackPanel Visibility="{Binding IsStatVisible}"  Margin="5,0,0,0">
+        </StackPanel>
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <hangman:LettersMonitor Grid.Row="0" Grid.Column="0" Letters="{Binding LettersField.LetterItems}" Height="50" 
+                                FontSize="24" Margin="5"/>
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5"
+                    Visibility="{Binding LettersField.LettersCount, Converter={StaticResource CountVisibilityConverter}}">
+                <TextBlock Text="{Binding LettersField.LettersCount, StringFormat='Длина: {0}'}" />
+                <TextBlock Text="{Binding GuessesLeftCount, StringFormat='Осталось попыток: {0}'}" Margin="5,0,0,0" />
+                <TextBlock Text="{Binding WrongGuesses, StringFormat='Неправильные попытки: {0}'}" Margin="5,0,0,0" 
+                       Visibility="{Binding WrongGuesses, Converter={StaticResource NullToVisibilityConverter}}"/>
+            </StackPanel>
+            <StackPanel Visibility="{Binding IsStatVisible, Converter={StaticResource BooleanToVisibilityConverter}}"  Margin="5,0,0,0" Grid.Row="2"
+                        VerticalAlignment="Top">
                 <TextBlock Text="{Binding DateTimeStart, StringFormat='Время начала: {0:T}', Mode=TwoWay, ConverterCulture={x:Static hangman:App.CurrentCulture}}" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding DateTimeEnd, StringFormat='Время окончания: {0:T}', Mode=TwoWay, ConverterCulture={x:Static hangman:App.CurrentCulture}}" VerticalAlignment="Center" />
                 <StackPanel Orientation="Horizontal">
@@ -51,24 +75,195 @@
                     <TextBlock Text="{Binding ElapsedTime, StringFormat={}{0:hh':'mm':'ss}}" VerticalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
-        <hangman:LettersMonitor Grid.Row="2" Grid.Column="0" Letters="{Binding LettersField.LetterItems}" Height="50" 
-                                FontSize="24" Margin="5"/>
-        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="5"
-                    Visibility="{Binding LettersField.LettersCount}">
-            <TextBlock Text="{Binding LettersField.LettersCount, StringFormat='Длина: {0}'}" />
-            <TextBlock Text="{Binding GuessesLeftCount, StringFormat='Осталось попыток: {0}'}" Margin="5,0,0,0" />
-            <TextBlock Text="{Binding WrongGuesses, StringFormat='Неправильные попытки: {0}'}" Margin="5,0,0,0" 
-                       Visibility="{Binding WrongGuesses}"/>
-        </StackPanel>
-        <hangman:AlphabeticalKeyboard Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <hangman:AlphabeticalKeyboard Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                       Foreground="Blue" BorderBrush="DarkBlue"
                                       DisabledLetters="{Binding DisabledLetters}"
                                       SelectedLetter="{Binding SelectedLetter, Mode=TwoWay}" 
                                       Margin="5"
-                                      Visibility="{Binding LettersField.LettersCount}"/>
-        <Canvas Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" />
-        <Button x:Name="button" Content="Рассказать друзьям" HorizontalAlignment="Left" Margin="516,24,0,0" Grid.Row="1" VerticalAlignment="Top" Width="166" Click="button_Click"/>
+                                      Visibility="{Binding LettersField.LettersCount, Converter={StaticResource CountVisibilityConverter}}"/>
+        </Grid>
+        <Viewbox Grid.Column="1" Grid.Row="2" Margin="0,5,5,5" VerticalAlignment="Top">
+            <Viewbox.Resources>
+                <Style TargetType="Rectangle" x:Key="RopeStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.Rope}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource RopeSb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.Rope}}" />
+                </Style>
+                <Style TargetType="Ellipse" x:Key="BodyStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.Body}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource BodySb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.Body}}" />
+                </Style>
+                <Style TargetType="Ellipse" x:Key="LeftHandStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.LeftHand}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource LeftHandSb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.LeftHand}}" />
+                </Style>
+                <Style TargetType="Ellipse" x:Key="RightHandStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.RightHand}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource RightHandSb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.RightHand}}" />
+                </Style>
+                <Style TargetType="Ellipse" x:Key="LeftLegStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.LeftLeg}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource LeftLagSb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.LeftLeg}}" />
+                </Style>
+                <Style TargetType="Ellipse" x:Key="RightLegStyle">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.RightLeg}">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource RightLegSb}"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.RightLeg}}" />
+                </Style>
+            </Viewbox.Resources>
+            <Canvas x:Name="Hangman" Width="125" Height="195">
+                <Ellipse x:Name="RightLeg" Fill="#FF40D4FF" Height="10.078" Stroke="#FF464646" Width="47.982" RenderTransformOrigin="0,0" Canvas.Left="56.452" Canvas.Top="128.788"
+                         Style="{StaticResource RightLegStyle}">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1.128" ScaleX="0.886"/>
+                            <SkewTransform AngleX="-12.384"/>
+                            <RotateTransform Angle="44.364"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse x:Name="LeftLeg" Fill="#FF40D4FF" Height="10.079" Stroke="#FF464646" Width="47.982" RenderTransformOrigin="0,0" Canvas.Left="9.904" Canvas.Top="140.83"
+                         Style="{StaticResource LeftLegStyle}">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1.1319999999999997" ScaleX="0.8829999999999999"/>
+                            <SkewTransform AngleY="12.625"/>
+                            <RotateTransform Angle="128.107"/>
+                            <TranslateTransform X="45.2868" Y="-5.18059"/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse x:Name="RightHand" Fill="#FF2DFFA9" Height="6.411" Stroke="#FF464646" Width="30.28" RenderTransformOrigin="0.5,0.5" Canvas.Left="53.85" Canvas.Top="101.76"
+                         Style="{StaticResource RightHandStyle}">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1.063" ScaleX="0.943"/>
+                            <SkewTransform AngleX="-11.766"/>
+                            <RotateTransform Angle="28.567"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse x:Name="LeftHand" Fill="#FF2DFFA9" Height="6.409" Stroke="#FF464646" Width="30.282" RenderTransformOrigin="0.5,0.5" Canvas.Left="18.71" Canvas.Top="103.896"
+                         Style="{StaticResource LeftHandStyle}">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1.132" ScaleX="0.883"/>
+                            <SkewTransform AngleY="12.625"/>
+                            <RotateTransform Angle="128.524"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse x:Name="Body" Fill="#FF25381B" Stroke="#FF464646" Width="12.56" Height="55.801" Canvas.Left="44.593" Canvas.Top="76.826" RenderTransformOrigin="0.5,0.5"
+                         Style="{StaticResource BodyStyle}">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Rectangle x:Name="Rope" Fill="#FF58CD21" Height="19.765" Stroke="Black" Width="4.083" Canvas.Left="49.267" Canvas.Top="17" StrokeThickness="0.5" RenderTransformOrigin="0.5,0"
+                           Style="{StaticResource RopeStyle}">
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Canvas x:Name="Head" Height="40.061" Width="50.028" Canvas.Left="26.629" Canvas.Top="36.765" RenderTransformOrigin="0.5,0.5">
+                    <Canvas.Style>
+                        <Style >
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.Head}">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource HeadSb}"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            <Setter Property="Canvas.Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.Head}}" />
+                        </Style>
+                    </Canvas.Style>
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Ellipse Fill="#FFF4F4F5" Height="40.061" Stroke="#FF464646" Width="50.028"/>
+                    <Ellipse Fill="#FFF4F4F5" Height="10.015" Stroke="#FF464646" Width="12.06" Canvas.Left="9.829" Canvas.Top="9.42"/>
+                    <Ellipse Fill="#FF4646FF" Height="3.788" Stroke="#FF464646" Width="4.562" Canvas.Left="13.402" Canvas.Top="12.639"/>
+                    <Ellipse Fill="#FFF4F4F5" Height="10.015" Stroke="#FF464646" Width="12.06" Canvas.Left="26.802" Canvas.Top="9.42"/>
+                    <Ellipse Fill="#FF4646FF" Height="3.788" Stroke="#FF464646" Width="4.561" Canvas.Left="30.376" Canvas.Top="12.639"/>
+                    <Rectangle Fill="#FFF4F4F5" Height="8.704" Stroke="#FF464646" Width="4.913" Canvas.Left="21.889" Canvas.Top="19.435"/>
+                    <Ellipse Fill="#FFF4F4F5" Height="3.814" Stroke="#FF464646" Width="24.419" Canvas.Left="12.51" Canvas.Top="31.241"/>
+                </Canvas>
+                <Canvas x:Name="Piller" Width="124.167" Height="195" RenderTransformOrigin="0.5,0.5">
+                    <Canvas.Style>
+                        <Style >
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentHangState}" Value="{x:Static viewModel:HangState.Piller}">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource PillerSb}"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            <Setter Property="Canvas.Visibility" Value="{Binding CurrentHangState, Converter={StaticResource HangmanVisibilityConverter}, ConverterParameter={x:Static viewModel:HangState.Piller}}" />
+                        </Style>
+                    </Canvas.Style>
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Rectangle Fill="#FFF10000" Stroke="Black" Width="110.667" Height="11.333" Canvas.Top="5.667"/>
+                    <Rectangle Fill="#FFF10000" Stroke="Black" Width="13.5" Height="195" Canvas.Left="110.667"/>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
     </Grid>
 </Window>
 
