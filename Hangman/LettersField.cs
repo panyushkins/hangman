@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Hangman.Annotations;
 
 namespace Hangman
 {
@@ -32,7 +31,7 @@ namespace Hangman
             {
                 if (Equals(value, _letterItems)) return;
                 _letterItems = value;
-                OnPropertyChanged();
+                OnPropertyChanged("LetterItems");
             }
         }
 
@@ -51,7 +50,7 @@ namespace Hangman
             {
                 if (value == _lettersCount) return;
                 _lettersCount = value;
-                OnPropertyChanged();
+                OnPropertyChanged("LettersCount");
             }
         }
 
@@ -81,8 +80,7 @@ namespace Hangman
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

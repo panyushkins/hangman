@@ -94,10 +94,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converts\CountVisibilityConverter.cs" />
-    <Compile Include="Converts\LabelContentStateConverter.cs" />
-    <Compile Include="Converts\LabelStateConverter.cs" />
-    <Compile Include="Converts\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\CountVisibilityConverter.cs" />
+    <Compile Include="Converters\LabelContentStateConverter.cs" />
+    <Compile Include="Converters\LabelStateConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DB\Category.cs" />
     <Compile Include="DB\HangmanContext.cs" />
     <Compile Include="DTO\Response\Response_vk.cs" />
