@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,12 +24,12 @@ namespace Hangman
 
         public static readonly DependencyProperty SelectedLetterProperty =
             DependencyProperty.Register(
-                "SelectedLetter", typeof(string),
+                "SelectedLetter", typeof(char),
                 typeof(AlphabeticalKeyboard), new PropertyMetadata(null));
 
         public static readonly DependencyProperty DisabledLettersProperty =
             DependencyProperty.Register(
-                "DisabledLetters", typeof(IEnumerable<string>),
+                "DisabledLetters", typeof(ObservableCollection<string>),
                 typeof(AlphabeticalKeyboard), new PropertyMetadata(DisabledButtonsChanged));
 
 	    private static void DisabledButtonsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -35,18 +39,39 @@ namespace Hangman
             var keyboard = d as AlphabeticalKeyboard;
             if (keyboard == null) return;
 	        var dLettersList = dLetters.ToList();
+            ProcessKeyboard(keyboard, dLettersList);
+            keyboard.DisabledLetters.CollectionChanged += (sender, args) =>
+	        {
+	            switch (args.Action)
+	            {
+	                case NotifyCollectionChangedAction.Add:
+                    case NotifyCollectionChangedAction.Remove:
+                        ProcessKeyboard(keyboard, keyboard.DisabledLetters.ToList());
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        foreach (var letter in keyboard._lettersList)
+                        {
+                            letter.Enabled = true;
+                        }
+                        break;
+                }
+            };
+	    }
+
+	    private static void ProcessKeyboard(AlphabeticalKeyboard keyboard, List<string> dLettersList)
+	    {
 	        foreach (var letter in keyboard._lettersList)
 	        {
-                var firstLetter = dLettersList.SingleOrDefault(l => l == letter.Symbol);
+	            var firstLetter = dLettersList.SingleOrDefault(l => l == letter.Symbol);
 	            letter.Enabled = firstLetter == null;
 	        }
-        }
+	    }
 
-        public string SelectedLetter
+	    public char SelectedLetter
         {
             get
             {
-                return (string)GetValue(SelectedLetterProperty);
+                return (char)GetValue(SelectedLetterProperty);
             }
             set
             {
@@ -54,11 +79,11 @@ namespace Hangman
             }
         }
 
-        public IEnumerable<string> DisabledLetters
+        public ObservableCollection<string> DisabledLetters
         {
             get
             {
-                return (IEnumerable<string>)GetValue(DisabledLettersProperty);
+                return (ObservableCollection<string>)GetValue(DisabledLettersProperty);
             }
             set
             {
@@ -71,12 +96,14 @@ namespace Hangman
 	        var btn = sender as Button;
 	        if (btn != null)
 	        {
-                SelectedLetter = btn.Content.ToString();
+                SelectedLetter = Convert.ToChar(btn.Content);
 	        }
 	    }
 
-        private class LetterLabel
+        private sealed class LetterLabel : INotifyPropertyChanged
         {
+            private bool _enabled;
+
             public LetterLabel(string symbol)
             {
                 Symbol = symbol;
@@ -89,9 +116,25 @@ namespace Hangman
                 Enabled = enabled;
             }
 
-            public string Symbol { get; set; }
+            public string Symbol { get; }
 
-            public bool Enabled { get; set; }
+            public bool Enabled
+            {
+                get { return _enabled; }
+                set
+                {
+                    if (value == _enabled) return;
+                    _enabled = value;
+                    OnPropertyChanged("Enabled");
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Hangman.DB;
 
 namespace Hangman
 {
@@ -23,12 +12,21 @@ namespace Hangman
         public MainWindow()
         {
             InitializeComponent();
+
+            HangmanDb = new HangmanContext();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private HangmanContext HangmanDb { get; set; }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            VKAuth dialog = new VKAuth();
-            dialog.Show();
+            //HangmanDb.Categories.Load();
+            //LstCategories.ItemsSource = HangmanDb.Categories.Local;
+            //LstCategories.DisplayMemberPath = "Name";
+
+            //HangmanDb.Words.Load();
+            //LstWords.ItemsSource = HangmanDb.Words.Local;
+            //LstWords.DisplayMemberPath = "Text";
         }
     }
 }
