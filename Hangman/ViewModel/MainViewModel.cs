@@ -170,7 +170,7 @@ namespace Hangman.ViewModel
             set
             {
                 if (Equals(_currentHangState, value)) return;
-                 _currentHangState = value;
+                _currentHangState = value;
                 RaisePropertyChanged(() => CurrentHangState);
             }
         }
@@ -213,9 +213,9 @@ namespace Hangman.ViewModel
             var letter = new ExtendedLetterLabel(SelectedLetter, LabelState.Visible);
             var lFieldLabels = LettersField.GetLetterLabels(letter.Symbol);
             DisabledLetters.Add(SelectedLetter.ToString());
-            foreach (var lFieldLabel in lFieldLabels)
+            if (lFieldLabels.Any())
             {
-                if (lFieldLabel != null)
+                foreach (var lFieldLabel in lFieldLabels)
                 {
                     lFieldLabel.LabelState = LabelState.Visible;
                     if (LettersField.IsGuessedWord)
@@ -226,20 +226,19 @@ namespace Hangman.ViewModel
                         break;
                     }
                 }
-                else
+            }
+            else
+            {
+                if (CurrentHangState != HangState.RightLeg)
+                    CurrentHangState++;
+                GuessesLeftCount = HangStateSize - (int)CurrentHangState;
+                WrongGuesses += string.IsNullOrWhiteSpace(WrongGuesses) ? SelectedLetter.ToString() : "," + SelectedLetter;
+                if (CurrentHangState == HangState.RightLeg)
                 {
-                    if (CurrentHangState != HangState.RightLeg)
-                        CurrentHangState++;
-                    GuessesLeftCount = HangStateSize - (int)CurrentHangState;
-                    WrongGuesses += string.IsNullOrWhiteSpace(WrongGuesses) ? SelectedLetter.ToString() : "," + SelectedLetter;
-                    if (CurrentHangState == HangState.RightLeg)
-                    {
-                        ShowStatistics();
-                        LettersField.BoldMissedLetters();
-                        MessageBox.Show("Вы проиграли!", "Соболезнования", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Reset();
-                        break;
-                    }
+                    ShowStatistics();
+                    LettersField.BoldMissedLetters();
+                    MessageBox.Show("Вы проиграли!", "Соболезнования", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Reset();
                 }
             }
         }

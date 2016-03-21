@@ -2,7 +2,7 @@
 
 namespace Hangman.DB
 {
-    class HangmanContextInitializer : CreateDatabaseIfNotExists<HangmanContext>
+    class HangmanContextInitializer : DropCreateDatabaseAlways<HangmanContext>
     {
         protected override void Seed(HangmanContext db)
         {
