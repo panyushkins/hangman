@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 
 namespace Hangman.DB
 {
     class HangmanContext : DbContext
     {
+        static HangmanContext()
+        {
+            Database.SetInitializer(new HangmanContextInitializer());
+        }
+
         public HangmanContext() : base("DefaultConnection")
             { }
 

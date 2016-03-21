@@ -59,9 +59,9 @@ namespace Hangman
             LettersFieldCollection.Clear();
         }
 
-        public ExtendedLetterLabel GetLetterLabel(char symbol)
+        public IEnumerable<ExtendedLetterLabel> GetLetterLabels(char symbol)
         {
-            return LettersFieldCollection.FirstOrDefault(l => l.Symbol == char.ToUpper(symbol));
+            return LettersFieldCollection.Where(l => l.Symbol == char.ToUpper(symbol));
         }
 
         public void BoldMissedLetters()
@@ -80,7 +80,7 @@ namespace Hangman
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

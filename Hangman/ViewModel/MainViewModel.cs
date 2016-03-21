@@ -211,30 +211,35 @@ namespace Hangman.ViewModel
         private void ProcessLetter()
         {
             var letter = new ExtendedLetterLabel(SelectedLetter, LabelState.Visible);
-            var lFieldLabel = LettersField.GetLetterLabel(letter.Symbol);
+            var lFieldLabels = LettersField.GetLetterLabels(letter.Symbol);
             DisabledLetters.Add(SelectedLetter.ToString());
-            if (lFieldLabel != null)
+            foreach (var lFieldLabel in lFieldLabels)
             {
-                lFieldLabel.LabelState = LabelState.Visible;
-                if (LettersField.IsGuessedWord)
+                if (lFieldLabel != null)
                 {
-                    ShowStatistics();
-                    MessageBox.Show("Вы победили!", "Поздавления", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Reset();
+                    lFieldLabel.LabelState = LabelState.Visible;
+                    if (LettersField.IsGuessedWord)
+                    {
+                        ShowStatistics();
+                        MessageBox.Show("Вы победили!", "Поздавления", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Reset();
+                        break;
+                    }
                 }
-            }
-            else
-            {
-                if (CurrentHangState != HangState.RightLeg)
-                    CurrentHangState++;
-                GuessesLeftCount = HangStateSize - (int)CurrentHangState;
-                WrongGuesses += string.IsNullOrWhiteSpace(WrongGuesses) ? SelectedLetter.ToString() : "," + SelectedLetter;
-                if (CurrentHangState == HangState.RightLeg)
+                else
                 {
-                    ShowStatistics();
-                    LettersField.BoldMissedLetters();
-                    MessageBox.Show("Вы проиграли!", "Соболезнования", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Reset();
+                    if (CurrentHangState != HangState.RightLeg)
+                        CurrentHangState++;
+                    GuessesLeftCount = HangStateSize - (int)CurrentHangState;
+                    WrongGuesses += string.IsNullOrWhiteSpace(WrongGuesses) ? SelectedLetter.ToString() : "," + SelectedLetter;
+                    if (CurrentHangState == HangState.RightLeg)
+                    {
+                        ShowStatistics();
+                        LettersField.BoldMissedLetters();
+                        MessageBox.Show("Вы проиграли!", "Соболезнования", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Reset();
+                        break;
+                    }
                 }
             }
         }

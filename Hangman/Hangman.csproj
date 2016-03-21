@@ -119,6 +119,7 @@
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DB\Category.cs" />
     <Compile Include="DB\HangmanContext.cs" />
+    <Compile Include="DB\HangmanContextInitializer.cs" />
     <Compile Include="DTO\Response\Response_vk.cs" />
     <Compile Include="LettersField.cs" />
     <Compile Include="LettersMonitor.xaml.cs">
