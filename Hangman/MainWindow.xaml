@@ -264,6 +264,7 @@
                 </Canvas>
             </Canvas>
         </Viewbox>
+        <Button x:Name="button" Content="Рассказать друзьям" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="148" Click="button_Click" Margin="434,5,0,0" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
 
